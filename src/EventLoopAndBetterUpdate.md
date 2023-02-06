@@ -110,7 +110,7 @@ const nextTick = (task) => {
     })
     {
       // all nextTick tasks done and reset status
-      nextTickCallbacks.length = 0
+      nextTickTasks.length = 0
       isNextTicking = false
     }
   })

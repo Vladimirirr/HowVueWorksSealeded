@@ -43,6 +43,8 @@ const data = {
 // 【值】【改变】触发的【行为】就是【依赖】
 // 【observer】【改变】触发的【行为】就是【watcher】
 // 因此，Vue2 的每个值闭包里的 dep 其实就是此值 observer 的观察者们的列表，即此值的依赖们
+// 对于观察者来说，被观察对象就是它的依赖
+// dep = dependenciesList = watchersList
 // 在此语义下，值 = observer，依赖 = watcher
 observe(data)
 /**
@@ -68,10 +70,6 @@ init --"1. trigger watcher for init"--> watcher --"2. run its effect"--> effect 
 
 effect --"cleanup its deps"--> effect
 ```
-
-对于观察者来说，被观察对象就是它的依赖。
-
-dep = dependenciesList = watchersList。
 
 之所以 watcher 也要收集 dep，是因为当一个 watcher 被注销时，需要把它自己从收集它的 deps 里清除（或告诉收集它的 deps 清除它）。
 

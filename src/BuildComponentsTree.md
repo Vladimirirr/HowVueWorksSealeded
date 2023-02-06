@@ -77,6 +77,7 @@
 ### 其中父子组件的关系索引：`_vnode` 与 `$vnode`
 
 `_vnode`: 表示渲染 VNode，组件自己 render 函数返回的 VNodesTree。
+
 `$vnode`: 表示占位 VNode，子组件在父组件 VNodesTree 里的 VNode 标识符，即诸如`<vue-component-id-name>`标签名的 VNode，它的`.componentOptions`包含子组件的基本构造信息，它的`.componentInstance._vnode`指向子组件的渲染 VNode（即 VNodesTree）。
 
 两者是父子关系，即`vm._vnode.parent === vm.$vnode`。

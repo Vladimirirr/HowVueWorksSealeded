@@ -241,7 +241,7 @@ const render = () => {
           props: { value: username },
           // the event
           on: {
-            "update:value": ($event) => {
+            'update:value': ($event) => {
               username = $event
             },
           },
@@ -254,7 +254,7 @@ const render = () => {
             {
               name: 'model:done',
               type: 'done',
-              params: []
+              params: [],
               value: username,
               expression: 'username',
             },
@@ -263,7 +263,7 @@ const render = () => {
           props: { done: username },
           // the event
           on: {
-            "update:done": ($event) => {
+            'update:done': ($event) => {
               username = $event
             },
           },

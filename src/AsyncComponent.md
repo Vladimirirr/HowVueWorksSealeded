@@ -98,12 +98,12 @@ The useage of Async Component Loader in createComponent:
  * the function createComponent that is on line 4379 in [vue2.5.17-beta.0.js] will be called in function _createElement
  * the createComponent called by [vm.$createElement or vm._c](in render function) -> [createElement](for normalizing children) -> [_createElement](actual createElement)
  *
- * @param {Function | Object} ctor the component's constructor or options
- * @param {Object} data the component's carried data, like attrs, listeners, slots and so on
- * @param {VueInstance} context the vue instance who render the component
- * @param {Array<VNode>} children the component's children
- * @param {string?} tag the component's name if existed
- * @return {VNode} a VNode that represents the component
+ * @param {Function | Object} ctor - the component's constructor or options
+ * @param {Object} data - the component's carried data, like attrs, listeners, slots and so on
+ * @param {VueInstance} context - the vue instance who render the component
+ * @param {Array<VNode>} children - the component's children
+ * @param {string?} tag - the component's name if existed
+ * @return {VNode} - a VNode that represents the component
  */
 function createComponent(ctor, data, context, children, tag) {
   if (ctor == null) {

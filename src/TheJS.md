@@ -113,6 +113,7 @@ Promise 如何解决：
 ## Generator
 
 一个可以被暂停的函数、一个可以被编程的迭代器，JavaScript 里协程的实现。
+
 最佳实践：与 Promise 组合，可以构建**书写简单但健壮的复杂异步操作组合**，这也就是 ES2017 最受关注的`async function`语法
 
 ## How `==` works defined in ES5.1
