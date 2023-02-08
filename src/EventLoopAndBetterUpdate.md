@@ -64,7 +64,7 @@ while (1) {
 1. setTimeout
 2. setInterval
 3. postMessage
-4. setImmediate (IE only, similar to automate set the best delay value by browser for setTimeout)
+4. setImmediate (IE only, similar to automating set the best delay value by browser for setTimeout)
 5. MessageChannel
 6. Script Tag
 7. Network Event

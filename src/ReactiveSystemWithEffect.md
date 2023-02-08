@@ -2,24 +2,17 @@
 
 ## 什么是副作用
 
-定义：函数或表达式的行为依赖或影响外部数据，具体的：
-
-1. 函数或表达式读或写了它作用域外的状态
-2. 函数或表达式除了返回值，还有其他的与外部的交互行为
+函数或表达式除了输入值和返回值，还存在其他的与外部的交互行为。
 
 案例：
 
 ```js
 const Foo = () => {
-  // 违反 1
-  window.fooCalled = true
-  // 违反 2
-  const runTime = Date.now()
-  // 违反 2
-  console.log(`Foo Called at ${runTime}.`)
-  // 正常
-  const res = [1, 2, 3, 4].reduce((acc, cur) => acc + cur, 0)
-  return res
+  window.fooCalled = true // effect
+  const runTime = Date.now() // effect
+  console.log(`Foo Called at ${runTime}.`) // effect
+  const res = [1, 2, 3, 4].reduce((acc, cur) => acc + cur, 0) // no effect
+  return res // no effect
 }
 ```
 
@@ -42,9 +35,8 @@ const data = {
 // 把 data 里的值都赋能一个 observer
 // 【值】【改变】触发的【行为】就是【依赖】
 // 【observer】【改变】触发的【行为】就是【watcher】
-// 因此，Vue2 的每个值闭包里的 dep 其实就是此值 observer 的观察者们的列表，即此值的依赖们
+// 因此，Vue2 的每个值闭包里的 dep(dep = dependenciesList = watchersList) 其实就是此值 observer 的观察者们的列表，即此值的依赖们
 // 对于观察者来说，被观察对象就是它的依赖
-// dep = dependenciesList = watchersList
 // 在此语义下，值 = observer，依赖 = watcher
 observe(data)
 /**

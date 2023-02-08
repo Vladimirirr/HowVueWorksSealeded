@@ -263,6 +263,7 @@ class Subscriber {
   }
 }
 
+// aka Bus
 class EventChannel {
   constructor() {
     this.eventPool = {} // 事件池

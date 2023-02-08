@@ -33,26 +33,49 @@ DSL = (Domain Specified Language)
     </div>
   </div>
 </template>
+<script>
+export default {
+  name: 'Component',
+  data() {
+    return {
+      isShowInfoText: true,
+      sayText: 'Unknown',
+    }
+  },
+  methods: {
+    doSubmit() {
+      // do something
+    },
+  },
+}
+</script>
 ```
 
 ## React JSX(JavaScript with XML) DSL
 
 ```jsx
-const tree = (
-  <div className="infoBlock">
-    <p className={{ infoText: isShowInfoText }}>
-      Some something important to say {sayText}.
-    </p>
-    <div>
+const Component = () => {
+  const isShowInfoText = useState(true)
+  const sayText = useState('Unknown')
+  const doSubmit = () => {
+    // do something
+  }
+  return (
+    <div className="infoBlock">
+      <p className={{ infoText: isShowInfoText }}>
+        Some something important to say {sayText}.
+      </p>
       <div>
-        <button onClick={doSubmit}>I see.</button>
+        <div>
+          <button onClick={doSubmit}>I see.</button>
+        </div>
+        <Foo
+          renderFooter={(data) => <p>The data of Foo's footer is {data}.</p>}
+        ></Foo>
       </div>
-      <Foo
-        renderFooter={(data) => <p>The data of Foo's footer is {data}.</p>}
-      ></Foo>
     </div>
-  </div>
-)
+  )
+}
 ```
 
 ## 编译结果
@@ -64,8 +87,11 @@ import { createVNode as h } from 'Vue | React'
 // 社区习惯性地将 createVNode 称为 h 函数，因为 VNode 的思想最早来源 hyperscript
 // https://github.com/hyperhype/hyperscript
 
-const render = () =>
-  h(
+const render = (currentState) => {
+  // get the current state at this rendering time
+  const { isShowInfoText, sayText, doSubmit } = currentState()
+  // render the UI using the current state
+  return h(
     // name
     'div',
     {
@@ -104,6 +130,7 @@ const render = () =>
       ]),
     ]
   )
+}
 ```
 
 此结构与平台无关，不同的平台渲染器（比如 DomRenderer、ServerDomRenderer、ReactNative、Weex）将渲染出对应的平台 UI。

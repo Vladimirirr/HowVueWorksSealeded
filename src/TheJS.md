@@ -116,7 +116,7 @@ Promise 如何解决：
 
 最佳实践：与 Promise 组合，可以构建**书写简单但健壮的复杂异步操作组合**，这也就是 ES2017 最受关注的`async function`语法
 
-## How `==` works defined in ES5.1
+## How `==` works (defined in ES5.1)
 
 `x == y`的行为：
 
@@ -150,7 +150,7 @@ Promise 如何解决：
 2. 对象是否存在 toString 方法，存在的话，返回其执行结果
 3. 报错
 
-## 执行上下文 defined in ES6
+## 执行上下文 (defined in ES6)
 
 执行上下文：被执行的函数作用域、块作用域和全局作用域
 

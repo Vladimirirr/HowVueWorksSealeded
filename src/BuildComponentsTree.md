@@ -23,7 +23,7 @@
          2. create the `updateComponent` function = `() => this._update(this._render())`
          3. run `this._renderWatcher = new Watcher(this, updateComponent, noop, { before(){ this.isMounted && this.callHook('beforeUpdate') } })`
             1. initialize a watcher for render
-            2. run `watcher.get()` to collect all dependencies the render needed
+            2. run `watcher.get()` to execute its effect
                1. call the `updateComponent` function
                   1. call `this._render()` to save the current VNodesTree as oldVNode and get the latest VNodesTree as newVNode, and while reading each value triggers the dependencies collecting
                      1. if meeting the VNode represented a dom, just return `new VNode(tagName, data, context, children)`
@@ -68,11 +68,10 @@
    1. call `beforeDestroy` hook
    2. run `removeSelf(this.$parent?.$children, this)` to remove itself from its parent
    3. run `this._renderWatcher.teardown()` and `this._watchers.teardown()` to teardown its all watchers
-   4. run `this.__patch__(this._vnode, null)` to clear its rendered dom, and will destroy all its children components in this clear stage
+   4. run `this.__patch__(this._vnode, null)` to clear its rendered dom, and will destroy all its children components recursively in this clear stage
    5. run `this.$off()` to unlisten its all listening events
-   6. run others cleanup
-   7. set `_isDestroyed` flag to true
-   8. call `destroyed` hook
+   6. set `_isDestroyed` flag to true
+   7. call `destroyed` hook
 
 ### 其中父子组件的关系索引：`_vnode` 与 `$vnode`
 

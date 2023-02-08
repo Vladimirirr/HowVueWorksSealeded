@@ -104,7 +104,7 @@ function initProps(vm) {
   // 3. 响应式
   // 4. 代理
 
-  // vm = Bar component instance
+  // vm = component instance
   // vm.propsData === VNode.componentOptions.propsData 传给 Bar 的数据，即 { username, info }
   const propsData = vm.$options.propsData || {}
 
@@ -545,7 +545,7 @@ const KeepAlive = {
 
 1. 来源模糊：不能快速定位谁的 mixin 或 HOC 注入了此功能 -> 能快速定位谁提供了此功能
 2. 命名冲突：不同 mixin 或 HOC 可能存在相同的标识符 -> 能自定义功能需要的标识符
-3. 嵌套过深：HOC 的嵌套 -> 平铺而且嵌套
+3. 嵌套过深：HOC 的嵌套 -> 平铺而非嵌套
 4. 关注分离：相同的逻辑可能被拆离到不同的钩子里（比如，设定计时器和清除计时器） -> 相同逻辑能在一起
 
 ### 使用 Hook 技术
