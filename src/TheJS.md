@@ -116,6 +116,35 @@ Promise 如何解决：
 
 最佳实践：与 Promise 组合，可以构建**书写简单但健壮的复杂异步操作组合**，这也就是 ES2017 最受关注的`async function`语法
 
+## Prototype Chain
+
+The essence of JavaScript's **Prototype Chain is a kind of Delegation Mechanism**.
+
+When an object can't find a property, it will **delegate** its prototype to find the property recursively, and return `undefined` instead if reaches the last prototype (the `null`) of the chain eventually.
+
+```js
+const object1 = Object.create(null)
+const object2 = Object.create(object1)
+const object3 = Object.create(object2)
+```
+
+```mermaid
+flowchart LR
+
+wantProp["property"]
+obj1["object 1"]
+obj2["object 2"]
+obj3["object 3"]
+theNull["null"]
+
+wantProp --"access"--> obj3 --"else delegating"--> obj2 --"else delegating"--> obj1 --"else delegating"--> theNull
+
+obj3 --"if found"--> wantProp
+obj2 --"if found"--> wantProp
+obj1 --"if found"--> wantProp
+theNull --"eventually return undefined"--> wantProp
+```
+
 ## How `==` works (defined in ES5.1)
 
 `x == y`的行为：

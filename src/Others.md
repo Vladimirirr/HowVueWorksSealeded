@@ -197,3 +197,52 @@ const App = () => {
   )
 }
 ```
+
+## 前端框架演进史
+
+### Vanilla JavaScript (AKA. Pure JavaScript)
+
+**蛮荒时代。**
+
+使用完全手写的 JavaScript HTML 和 CSS。
+
+### Utilities Library
+
+**前端进入工具方法复用时代。**
+
+逻辑方面：封装常用的 dom 操作，代表：jQuery
+结构和样式方面：封装常用的 css 样式，代表：bootstrap
+
+### Component with MVC
+
+**前端进入设计模式和组件组合时代。**
+
+引入面向对象领域的 MVC 设计模式，使用此设计模式定义组件：
+
+1. 组件的数据（状态） = Model（获取、保存数据，触发更新）
+2. 组件的结构和样式 = View（视图使用模板引擎生成）
+3. 组件的逻辑 = Controller（更新视图，组件通信，组件挂载、更新和销毁，路由，其他）
+
+代表：backbone
+
+### The Framework focusing on View
+
+**前端框架正式诞生。**
+
+提出 MVVM 设计模式，每个框架使用自己的 DSL 来描述各自的组件，**框架的运行时**将管理这些组件，负责它们的：挂载、更新、销毁、通信、组合、缓存、等。
+
+奠定组件的定义：`UI = Render(State)`，前端框架从传统的专注面向对象的设计模式转换到面向函数的设计模式。
+
+代表：Vue React
+
+### The Framework focusing on Smaller and Faster bundle
+
+**关注构建产物的体积大小和执行速度。**
+
+返璞归真，这些框架依旧延续上一代框架的组件设计思想，只不过最终编译出的构建产物不再包含庞大的运行时，而是能独立运行的 JavaScript。
+
+代表：SvelteJS SolidJS
+
+### Expect something more magical to happen
+
+等待前端下一次的变天。
