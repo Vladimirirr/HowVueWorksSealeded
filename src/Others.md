@@ -10,7 +10,7 @@ Vite 暴露如下的 HMR APIs:
 2. `import.meta.hot.accept(([fooNewModule]) => void 0, ['./foo.js']);` 模块接受其他模块的更新
 3. `import.meta.hot.data: any` 持久化数据，在模块更新时传递下去
 4. `import.meta.hot.decline()` 表示此模块不支持热更新，此模块的任何更新都需要重载整个组件树
-5. `import.meta.hot.on((...args) => void)` 事件，内置事件（即将更新：beforeUopdate，即将清除：beforePrune，发生错误：error），以及插件自定义的事件
+5. `import.meta.hot.on((...args) => void)` 事件，内置事件（即将更新：beforeUpdate，即将清除：beforePrune，发生错误：error），及插件的自定义事件
 
 vite-plugin-vue2 会把每个 vue 文件（模块）按照它的路径得到一个唯一的 id，依据此 id 将不同的 Vue 模块依赖的热更新数据保存到集合里：
 
@@ -54,7 +54,7 @@ if (!__VUE_HMR_RUNTIME__.isRecorded(__id__)) {
   // __component__ 是 @vue/compiler-sfc 的编译结果
   __VUE_HMR_RUNTIME__.createRecord(__id__, __component__.options) // hmrRccordsMap.push({ options: options, constructor: null, instances: [] })
 }
-// hot.accept 对同一个文件的注册只有第一次有效
+// hot.accept 对同一个文件只有第一次有效
 import.meta.hot.accept((newModule) => {
   if (!newModule) return
   // updateType 在 vite 的 trasform 钩子里得出
@@ -129,7 +129,11 @@ record.instances.forEach((instance) => {
 
 ## @vue2/compiler-sfc
 
-@vue2/compiler-sfc：只对 template 和 style 块编译，script 块不需要编译（本身就已经是 JavaScript 代码，transpile 使用 babel 或 **esbuild**）。
+@vue2/compiler-sfc：只对 template 和 style 块编译，script 块不需要编译（本身就已经是 JavaScript，transpile 使用 babel 或 **esbuild** 或 **swc**）。
+
+- [babel](https://github.com/babel/babel): a JavaScript transpiler written in JavaScript itself
+- [esbuild](https://github.com/evanw/esbuild): a JavaScript transpiler and bundler written in GoLang
+- [swc](https://github.com/swc-project/swc): similar to esbuild but written in Rust
 
 ```js
 // 编译模板
@@ -148,7 +152,7 @@ compiler.compileStyle({
 })
 ```
 
-## [diff + patch] after DOM modified manually
+## (diff + patch) after DOM modified manually
 
 ```jsx
 // color
@@ -211,7 +215,7 @@ const App = () => {
 **前端进入工具方法复用时代。**
 
 逻辑方面：封装常用的 dom 操作，代表：jQuery
-结构和样式方面：封装常用的 css 样式，代表：bootstrap
+结构和样式方面：封装常用的结构和它的 css 样式，代表：bootstrap
 
 ### Component with MVC
 
@@ -221,7 +225,7 @@ const App = () => {
 
 1. 组件的数据（状态） = Model（获取、保存数据，触发更新）
 2. 组件的结构和样式 = View（视图使用模板引擎生成）
-3. 组件的逻辑 = Controller（更新视图，组件通信，组件挂载、更新和销毁，路由，其他）
+3. 组件的逻辑 = Controller（更新视图，组件通信，组件挂载、更新和销毁，路由，等其他）
 
 代表：backbone
 

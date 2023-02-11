@@ -91,7 +91,7 @@ function resolveAsyncComponent(loader, context, metaData) {
 }
 ```
 
-The useage of Async Component Loader in createComponent:
+The useage of Async Component Loader in Vue:
 
 ```js
 /**
