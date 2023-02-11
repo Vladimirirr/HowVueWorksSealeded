@@ -556,7 +556,7 @@ Vue 的组合式语法借鉴自 React 的 Hook 语法，都是**一种更合理�
 
 Hook 本意是将一些**特殊功能**（普通函数不具备的功能，比如有状态的数据、渲染钩子、等等）**钩入**到函数组件里，**钩入** -> 导入 -> 融合 -> **组合**，衍生到：将自定义 Hook 暴露的功能【钩入、组合】到组件里，故根本上`Hook === Composition`，只是不同的叫法。
 
-而广义上，Hook **就是一个**有状态的**函数**，它能在任何能使用函数的地方使用，或者说 Hook 将状态赋能给普通函数。
+而广义上，Hook **就是一个有状态的函数**，它能在任何能使用函数的地方使用，**或者说 Hook 将状态赋能给普通函数**。
 
 自定义 Hook 对组件来说就像 C 语言的`#include`一样，将一个 Hook 的【数据和逻辑】导入（组合）到组件，是平铺的代码复用方式。
 
@@ -607,7 +607,7 @@ const Foo = {
 }
 
 // equal to the following
-const Foo22 = {
+const FooEquivalent = {
   setup(props) {
     const name = ref('nat')
     // just like #include in C

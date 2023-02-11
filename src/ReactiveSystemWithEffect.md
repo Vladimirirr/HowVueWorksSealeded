@@ -32,10 +32,10 @@ const data = {
   },
 }
 
-// 把 data 里的值都赋能一个 observer
-// 【值】【改变】触发的【行为】就是【依赖】
-// 【observer】【改变】触发的【行为】就是【watcher】
-// 因此，Vue2 的每个值闭包里的 dep(dep = dependenciesList = watchersList) 其实就是此值 observer 的观察者们的列表，即此值的依赖们
+// 把 data 里的值都赋予一个 observer，此 observer 将监视此值的变化，便赋予了此值响应式的能力
+// 【依赖】监视【值】的【改变】从而做出它的【行为】
+// 【watcher】监视【observer】的【改变】从而做出它的【行为】
+// Vue2 的每个值闭包里的 dep(dep = dependenciesList = watchersList) 其实就是此值 observer 的观察者们的列表，即此值的依赖们
 // 对于观察者来说，被观察对象就是它的依赖
 // 在此语义下，值 = observer，依赖 = watcher
 observe(data)
@@ -63,7 +63,7 @@ init --"1. trigger watcher for init"--> watcher --"2. run its effect"--> effect 
 effect --"cleanup its deps"--> effect
 ```
 
-之所以 watcher 也要收集 dep，是因为当一个 watcher 被注销时，需要把它自己从收集它的 deps 里清除（或告诉收集它的 deps 清除它）。
+之所以 watcher 也要收集 dep，是因为当一个 watcher 被注销时，需要把它自己从收集它的 deps 里清除（或告诉收集它的 deps 清除它），防止 dep 不再需要的 watcher 被意外地触发。
 
 ## 实现基本的 Vue2 的响应式系统
 
@@ -220,7 +220,7 @@ const observe = (data) => {
         this.__observer__.trigger('outsideObserverTrigger')
       }
     })
-    // hijack the origin prototype of the arr by inserting the methodsHijacked before its origin prototype
+    // hijack the origin prototype of the arr by inserting the object methodsHijacked before its origin prototype
     arr.__proto__ = methodsHijacked
   }
   // begin observing
@@ -298,7 +298,7 @@ class Observer {
   static allInstances = []
   /**
    * @param {string} type - type of the observer
-   * @param {any} observed - **test only** observed data(value)
+   * @param {any} observed - **test only** the observed data(value)
    */
   constructor(type, observed) {
     this.id = Observer.id++
@@ -429,7 +429,7 @@ class Watcher {
   }
   /**
    * run its effect and try to get the latest value
-   * make itself as current watcher when getting
+   * make itself as current watcher when getting to begin the dependencies collecting
    */
   get() {
     currentWatcher.push(this)
@@ -447,14 +447,14 @@ class Watcher {
     }
     // touch every property so they are all tracked as dependencies for a deep watcher
     if (this.deep) {
-      // traverse(value) // traverse should be implemented by user
+      // traverse(value) // TODO
     }
     currentWatcher.pop()
     this.cleanupObserverList()
     return value
   }
   /**
-   * cleanup useless watchersList in observerList comparing by newObserverList
+   * cleanup useless watchersList in observerList by comparing newObserverList
    */
   cleanupObserverList() {
     this.observerList.forEach((list) => {
@@ -539,4 +539,4 @@ Vue1.x 的响应式更新以 dom 节点为单位进行更新，在渲染模板�
 Vue1.x 的细颗粒更新的主要缺点：
 
 1. 依赖越多需要的 watcher 也越多，消耗内存
-2. 仅支持 Web 端
+2. 仅支持 Web 端（没有 VNode）

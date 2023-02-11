@@ -104,7 +104,7 @@ class Observer {
    */
   unobserve(subject) {
     if (this.target) {
-      // remove me from subject first
+      // remove myself from subject
       this.target.delObserver(this)
       this.target = null
     }
@@ -253,6 +253,7 @@ class Subscriber {
     this.subscribedEvents.splice(foundIndex, 1)
   }
   /**
+   * the exposed function to activate the subscriber itself
    * @param {string} eventName
    * @param {any?} data
    */
@@ -301,6 +302,7 @@ class EventChannel {
     }
   }
   /**
+   * dispatch an event to all its related subscriber
    * @param {string} eventName
    * @param {any?} data
    */

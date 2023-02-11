@@ -261,5 +261,5 @@ Vue2 的组件更新就是基于上述代码的原型：
 - Vue2 的每个组件的 renderWatcher computedWatcher userWatcher 就是 updater
 - Vue2 的 queueWatcher 即 queueUpdater，也会检查此 watcher 是否已经存在
 - Vue2 的 flushCallbacks 即 beginUpdate
-- Vue2 的单个 updater 默认最多更新次数是 100
+- Vue2 的单个 updater 默认最多更新次数是 100 而这里是 10
 - Vue2 的 updater 有更细的优先级方案（即根据 watcher.id 值），而这里只有普通和紧急两种
