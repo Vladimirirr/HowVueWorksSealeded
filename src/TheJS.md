@@ -103,7 +103,7 @@ Promise 目的：使异步任务**可控制可信任**且**高效地链式组合
 
 Promise 如何解决：
 
-1. 创建一个 promise，由此 promise 代理其他 api 的状态变更和对应的 callback
+1. 创建一个 promise，由此 promise 代理此 api 的状态变更和对应的 callback
 2. 支持链式语法
 
 ### 为什么 Promise 本身不能取消或不支持取消？
