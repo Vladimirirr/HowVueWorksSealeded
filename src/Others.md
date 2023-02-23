@@ -46,6 +46,7 @@ beforeDestroy(){
 
 ```js
 import __VUE_HMR_RUNTIME__ from 'vite-plugin-vue2'
+
 // 此文件（模块）在热更新下的唯一标识符
 const __id__ = '7a7a37b1'
 // 是否已经记录此模块
@@ -174,7 +175,7 @@ Vue3 对 `<tagName :style="{ color: textColor }" />` 这样的 style 值视作�
 
 ## Headless UI
 
-没有样式和结构的 UI 组件，只是暴露出此组件需要的基本逻辑 api，比如：
+传统的 UI 框架（比如，AndDesign、Element、iView）是一套现成的模板，不适合二次定制（需要大量的样式覆盖），而 Headless UI 的组件设计思想是只暴露出一个组件需要的最基础的逻辑功能，样式（甚至结构）完全自由定制。
 
 ```jsx
 import { useCounter } from 'nextui/headless/react'
@@ -214,8 +215,8 @@ const App = () => {
 
 **前端进入工具方法复用时代。**
 
-逻辑方面：封装常用的 dom 操作，代表：jQuery
-结构和样式方面：封装常用的结构和它的 css 样式，代表：bootstrap
+- 逻辑方面：封装常用的 dom 操作，代表：jQuery
+- 结构和样式方面：封装常用的结构和它的 css 样式，代表：bootstrap
 
 ### Component with MVC
 

@@ -44,4 +44,4 @@ setTimeout(() => {
 
 ## Vue2 的渲染器
 
-Vue2 的 DomRenderer 渲染器构建在 [snabbdom](https://github.com/snabbdom/snabbdom) 的基础上。
+Vue2 的 DomRenderer（渲染 VTree 到 dom 树）渲染器构建在 [snabbdom](https://github.com/snabbdom/snabbdom) 的基础上。

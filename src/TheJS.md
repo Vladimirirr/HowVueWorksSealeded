@@ -233,80 +233,23 @@ const result = intermediateArea / 2 // 结果
 console.log(result)
 ```
 
-# WeakMap and WeakSet
+## WeakMap and WeakSet
 
 WeakMap 仅接收对象作为键。对象被弱持有，意味着如果对象本身被垃圾回收掉，那么在 WeakMap 中的记录也会被移除。这是代码层面观察不到的。
 同理，WeakSet 只是弱持有它的值。
 
 由于随时可能给 GC 回收，故不能得到它当前的 items 长度，也不能迭代它。
 
-# WebAssembly
+# 再快点！JavaScript！
 
-`asm.js` + `simd.js` --evolved--> `WebAssembly`
+## WebWorker
 
-`asm.js` is an extraordinarily optimized low-level subset of JavaScript, which only allows things like `while`, `if`, `number`, `top-level named function`, and other simple constructs. This subset of JavaScript is already highly optimized in many JavaScript engines using fancy Just-In-Time(JIT) compiling techniques, such as SpiderMonkey(Firefox), V8(Chrome) and Chakra(IE and old Edge).
+浏览器的多线程技术。
 
-`simd.js` is the Single Instruction and Multiple Data technique implemented on JavaScript.
+文档：https://developer.mozilla.org/en-US/docs/Web/API/Worker
 
-WebAssembly is a low-level assembly-like language that can be compiled into a compact binary format like bytecode of Java, which runs on modern JavaScript engines directly, and also provides languages such as `C/C++`, `Golang` and `Rust` with a cross-compilation target so that they can run on the web.
-WebAssembly is designed to complement and run alongside with JavaScript, and they communicate easily.
+## WebAssembly
 
-Emscripten is a complete Open Source compiler toolchain to WebAssembly like Binaryen. Using Emscripten you can:
+浏览器的第二可执行语言，类似 Java 的字节码格式，可以从 C C++ Rust GoLang 等语言交叉编译而来。
 
-1. Compile C/C++ code, or any other language that uses LLVM, into WebAssembly, and run it on the Web, Node.js, or other wasm runtimes.
-2. Compile the C/C++ runtimes of other languages into WebAssembly, and then run code in those other languages in an indirect way (for example, this has been done for Python and Lua).
-
-翻译：
-
-1. 将 C/C++ 代码或任何其他使用 LLVM 的语言编译为 WebAssembly，并在 Web、Node.js 或其他 wasm 运行时上运行这些代码。
-2. 将其他语言的 C/C++ 运行时编译为 WebAssembly，最终间接地运行这些语言的代码（例如，Python 和 Lua 已经这样做了）。
-
-比如 Python 要交叉编译到 webassembly，其实是把 CPython（C 语言实现的 Python 编译器）编译到成对应的 wasm，在基于此 wasm 的运行时上执行 Python 代码。(Because Python is not a language that can not be compiled to native code.)
-
-# WebWorker
-
-**下面的 worker 均指 WebWorker（也叫专用 worker），与 ShareWorker 、 ServiceWorker 、 AudioWorker 及其他的 worker 相区分。**
-
-**WebWorker 是真正的操作系统级别的线程。**
-
-### 构造器
-
-```js
-new Worker(workerPath, ?options)
-// workerPath：需要加载的worker的脚本路径（可以是本页面创建的BlobURL），必须返回有效且同源的JavaScript的mime类型，比如text/javascript
-// options: {
-//   type: 'classic' | 'module' = 'classic', // worker的类型，对于Chrome>=80支持module，从而在worker之间使用标准的模块化编程，而Firefox目前的最新版本102依旧不支持
-//   name?: string, // 此worker的名字，方便调试
-//   credentials？: 'omit' | 'same-origin' | 'include' = 'omit' // 指定凭证，如果是classic的worker默认moit，即不需要凭证
-// }
-
-```
-
-### 数据传递
-
-worker 的 postMessage 传递的是数据的副本（传值而非传址），数据使用[**结构化克隆算法**](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm)进行拷贝和传递，结构化克隆算法可以简单地理解为升级版的 JSON 算法，因为它还能传递 JS 的特殊数据类型（函数、Symbol、等），还可以解决循环引用的问题。
-
-不过可以通过 postMessage 的第二个参数开启传址方式（传递一个对象的引用），即转让一个对象。
-
-### 限制访问
-
-- worker 运行在独立的上下文（有自己独立的事件循环），worker 内部的全局对象不是 window，也不包含 window，使用 self 或全局的 this 来访问 worker 的[全局对象(DedicatedWorkerGlobalScope)](https://developer.mozilla.org/en-US/docs/Web/API/DedicatedWorkerGlobalScope)
-- 除了不能直接操作父页面的 dom 及其相关操作，其他常用的浏览器 API 都能使用，比如 AJAX（不过返回的 response 的 responseXML 总是 null）、fetch、websocket、indexedDB、setTimeout、等等，但是 localStorage 和 sessionSorage 不能用，可以在此查看[具体的清单](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Functions_and_classes_available_to_workers)
-
-### 导入脚本
-
-语法：`[self.]importScript(path1, path2, ...)`
-
-在 worker 内部引入脚本（即在当前的 worker 环境内执行此脚本，相当于 C 语言的`#include`）。
-
-将同时下载多个脚本，但是执行顺序严格按照书写顺序，且 importScript 是同步执行，只有当全部的脚本执行完才释放 JS 控制权。
-
-### 子 worker
-
-在 worker 内部可以继续生成 worker（路径解析相当于父 worker 而非根页面），但必须与跟页面同源，即全部的 worker 都需要与根页面同源。
-
-### 其他
-
-workerInstance.terminate 方法：立刻终止此 worker，不会给 worker 留下剩余的操作机会
-
-onmessageerror 事件：当此 worker 无法解析收到的数据时
+文档：https://developer.mozilla.org/en-US/docs/WebAssembly

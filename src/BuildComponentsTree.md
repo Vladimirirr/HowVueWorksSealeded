@@ -68,7 +68,7 @@
    1. call `beforeDestroy` hook
    2. run `removeSelf(this.$parent?.$children, this)` to remove itself from its parent
    3. run `this._renderWatcher.teardown()` and `this._watchers.teardown()` to teardown its all watchers
-   4. run `this.__patch__(this._vnode, null)` to clear its rendered dom, and will destroy all its children components recursively in this clear stage
+   4. run `this.__patch__(this._vnode, null)` to clear its rendered dom, and will destroy all its children components recursively in this stage
    5. run `this.$off()` to unlisten its all listening events
    6. set `_isDestroyed` flag to true
    7. call `destroyed` hook
