@@ -2,95 +2,9 @@
 
 ## 闭包
 
-词法作用域和函数一等公民导致的副作用，闭包是一个**函数**及其引用的父级**作用域**（一个或多个，这些作用域被引擎存活）。
+【词法作用域】和【函数一等公民导致】两者导致的副作用，闭包是一个**函数**及其引用的父级**作用域**。
+
 由于词法作用域，闭包在书写函数代码时就被创建了。
-
-### 出现背景
-
-1. 由于 JavaScript 基于静态作用域（也叫词法作用域），即函数对变量的作用域链查找规则在书写源代码时就决定了，与运行时无关（对应动态作用域，比如 Bash），示例：
-
-```js
-var name = 'stark'
-function foo(otherFunction) {
-  var name = 'thor'
-  bar()
-}
-function bar() {
-  console.log(`my name is ${name}`)
-}
-
-// run bar directly and print 'stark'
-bar()
-
-// run bar wrapped with foo and print 'stark' too
-foo()
-```
-
-多数语言都是静态作用域。
-如果是动态作用域，上述示例代码的 foo 执行将打印'thor'而不是'stark'。
-
-2. 由于 JavaScript 将函数作为一等公民，函数就像普通值一样能传来传去（比如当作其他函数的入参或返回值，此时这个其他函数便是高阶函数）
-
-### 引出本质
-
-由于上述提到的两点基本前提，也就导致了闭包的出现：
-
-```js
-function foo() {
-  var statement = 'hi Mr. stark'
-  var count = 0
-  // 由于foo函数返回值是另一个bar函数，那么foo就叫做高阶函数
-  // 由于返回的bar函数在外部可能会被执行，引擎就必须存活statement和count变量，也就是**存活【当前】的foo的函数作用域**
-  return function bar() {
-    console.log(`${statement} with ${++count} times.`)
-  }
-}
-
-var fn = foo()
-fn() // 'hi Mr. stark with 1 times'
-fn() // 'hi Mr. stark with 2 times'
-
-var fn2 = foo() // each foo function will create a **new independent** scope
-fn2() // 'hi Mr. stark with 1 times'
-fn2() // 'hi Mr. stark with 2 times'
-```
-
-由于：
-
-1. 静态作用域：bar 函数对它内部使用到的变量 statement 和 count 的查找作用域链在书写时就被确定
-2. JavaScript 是一等公民：bar 函数允许作为 foo 函数的返回值被返回出去
-
-**最终导致：** JavaScript 引擎即便在 foo 函数执行完毕了也要继续存活 foo 函数的作用域，因为此作用域被 bar 函数使用到了，**此时 foo 函数的作用域就叫做【闭包】，而 bar 函数叫做【闭包函数】（拥有闭包的函数）**。
-
-### 验证一个闭包能被多个引用它的函数相互读写
-
-```js
-const field = () => {
-  var name = 'origin'
-  return {
-    // 核心：下面的三个方法，使用到的name变量，都来自同一个作用域 —— 当前的field的函数作用域
-    a() {
-      name = 'aaaa'
-    },
-    b() {
-      name = 'bbbb'
-    },
-    what() {
-      console.log(name)
-    },
-  }
-}
-
-const fieldDo = field()
-
-fieldDo.what() // origin
-fieldDo.a()
-fieldDo.what() // aaaa
-fieldDo.b()
-fieldDo.what() // bbbb
-fieldDo.a()
-fieldDo.what() // aaaa
-```
 
 ## Promise
 
@@ -114,7 +28,7 @@ Promise 如何解决：
 
 一个可以被暂停的函数、一个可以被编程的迭代器，JavaScript 里协程的实现。
 
-最佳实践：与 Promise 组合，可以构建**书写简单但健壮的复杂异步操作组合**，这也就是 ES2017 最受关注的`async function`语法糖
+最佳实践：与 Promise 组合，可以构建**书写简单但健壮的复杂异步操作组合**，这也就是 ES2017 最受关注的`async await`语法糖
 
 ## Prototype Chain
 
@@ -179,27 +93,6 @@ theNull --"eventually return undefined"--> wantProp
 2. 对象是否存在 toString 方法，存在的话，返回其执行结果
 3. 报错
 
-## 执行上下文 (defined in ES6)
-
-执行上下文：被执行的函数作用域、块作用域和全局作用域
-
-```mermaid
-flowchart LR
-
-ctx["执行上下文"] --> thisBind["this绑定（仅限函数作用域上下文）"]
-ctx["执行上下文"] --> lexicalEnv["词法环境\n维持let和const变量与值的映射表"]
-lexicalEnv --> lexicalEnvRec["环境记录器\n记录值的内存地址"]
-lexicalEnvRec --> lexicalEnvRecClaim["函数上下文的环境记录器：声明式环境记录器\n保存函数上下文出现的值，包括函数自身的名字与函数的参数"]
-lexicalEnvRec --> lexicalEnvRecObject["全局上下文的环境记录器：对象环境记录器\n保存全局上下文出现的值"]
-lexicalEnv --> lexicalEnvExternalEnv["父词法环境的引用"]
-ctx["执行上下文"] --> varEnv["变量环境\n维持var变量与值的映射表"]
-varEnv --> varEnvRec["环境记录器"]
-varEnvRec --> varEnvRecClaim["声明式环境记录器"]
-varEnvRec --> varEnvRecObject["对象环境记录器"]
-varEnv --> varEnvExternalEnv["父词法环境的引用"]
-
-```
-
 ## 元编程
 
 程序在运行时能修改语言自身特性的能力。
@@ -232,13 +125,6 @@ const intermediateArea = bottom * height // 矩形面积（中间结果），对
 const result = intermediateArea / 2 // 结果
 console.log(result)
 ```
-
-## WeakMap and WeakSet
-
-WeakMap 仅接收对象作为键。对象被弱持有，意味着如果对象本身被垃圾回收掉，那么在 WeakMap 中的记录也会被移除。这是代码层面观察不到的。
-同理，WeakSet 只是弱持有它的值。
-
-由于随时可能给 GC 回收，故不能得到它当前的 items 长度，也不能迭代它。
 
 # 再快点！JavaScript！
 
