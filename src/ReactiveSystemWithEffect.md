@@ -8,9 +8,9 @@
 
 ```js
 const Foo = () => {
-  window.fooCalled = true // effect
-  const runTime = Date.now() // effect
-  console.log(`Foo Called at ${runTime}.`) // effect
+  window.fooCalled = true // effect 改了一个全局变量
+  const runTime = Date.now() // effect 读取了一个外部的值
+  console.log(`Foo Called at ${runTime}.`) // effect 向外部创造了一些数据
   const res = [1, 2, 3, 4].reduce((acc, cur) => acc + cur, 0) // no effect
   return res // no effect
 }

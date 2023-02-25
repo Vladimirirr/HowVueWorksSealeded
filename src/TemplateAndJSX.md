@@ -2,8 +2,8 @@
 
 ## What is VNode
 
-VNode(Virtual Node) 描述 UI 结构的节点。
-VTree(Virtual Nodes Tree) 由 VNode 组成的描述 UI 的树结构。
+- VNode(Virtual Node) 描述 UI 结构的节点。
+- VTree(Virtual Nodes Tree) 由 VNode 组成的描述 UI 的树结构。
 
 Virtual 表示此数据结构与平台无关。
 
