@@ -9,8 +9,8 @@ Vite 暴露如下的 HMR APIs:
 1. `import.meta.hot.accept((newModule) => void 0)` 模块接受自身的更新，得到模块的最新值
 2. `import.meta.hot.accept(([fooNewModule]) => void 0, ['./foo.js']);` 模块接受其他模块的更新
 3. `import.meta.hot.data: any` 持久化数据，在模块更新时传递下去
-4. `import.meta.hot.decline()` 表示此模块不支持热更新，此模块的任何更新都需要重载整个组件树
-5. `import.meta.hot.on((...args) => void)` 事件，内置事件（即将更新：beforeUpdate，即将清除：beforePrune，发生错误：error），及插件的自定义事件
+4. `import.meta.hot.decline()` 显式指定此模块不可热更新，如果在传播热更新信号时遇到此模块，要重载整个浏览器
+5. `import.meta.hot.on((...args) => void)` 事件，内置事件（即将更新：beforeUpdate，即将重载：beforeFullReload，即将清除：beforePrune，发生错误：error），及插件的自定义事件
 
 vite-plugin-vue2 会把每个 vue 文件（模块）按照它的路径得到一个唯一的 id，依据此 id 将不同的 Vue 模块依赖的热更新数据保存到集合里：
 
