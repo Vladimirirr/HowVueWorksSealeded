@@ -2,14 +2,20 @@
 
 ## What is VNode
 
-- VNode(Virtual Node) 描述 UI 结构的节点。
-- VTree(Virtual Nodes Tree) 由 VNode 组成的描述 UI 的树结构。
+- VNode(Virtual Node) 描述 UI 节点的结构
+- VTree(Virtual Nodes Tree) 由 VNode 组成的描述 UI 树的结构
 
-Virtual 表示此数据结构与平台无关。
+Virtual 表示此数据结构与特定平台不相关。
 
 ## What is DSL
 
-DSL = (Domain Specified Language)
+DSL(Domain Specified Language) 指的是仅在特定领域下发挥效果的语言，比如：
+
+1. HTML & CSS 仅在 Web 下
+2. SQL 仅在 DBMS 下
+3. Markdown
+4. AWK
+5. ...
 
 下面的 Template 和 JSX 都是描述 UI 的 DSL。
 
@@ -84,7 +90,7 @@ const Component = () => {
 
 ```js
 import { createVNode as h } from 'Vue | React'
-// 社区习惯性地将 createVNode 称为 h 函数，因为 VNode 的思想最早来源 hyperscript
+// 习惯性地将 createVNode 称作 h 函数（VNode 的思想最早来自 hyperscript）
 // https://github.com/hyperhype/hyperscript
 
 const render = (currentState) => {
@@ -133,4 +139,4 @@ const render = (currentState) => {
 }
 ```
 
-此结构与平台无关，不同的平台渲染器（比如 DomRenderer、ServerDomRenderer、ReactNative、Weex）将渲染出对应的平台 UI。
+此结构与平台不相关，不同的平台渲染器（比如，DomRenderer、ServerDomRenderer、ReactNative、Weex）将渲染出对应平台真正的 UI。

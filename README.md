@@ -10,4 +10,4 @@ The book has been archived.
 
 # 阅读 (Read The Book)
 
-[阅读 (ReadBook)](./src/index.md)
+[阅读 (ReadTheBook)](./src/index.md)
