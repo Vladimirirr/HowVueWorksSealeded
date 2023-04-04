@@ -1,16 +1,18 @@
-# 响应式系统与副作用
+# 响应式系统与副效果
 
-## 什么是副作用
+## 什么是副效果
 
 函数或表达式除了输入值和返回值，还存在其他的与外部的交互行为。
+
+副效果 = effect
 
 案例：
 
 ```js
 const Foo = () => {
-  window.fooCalled = true // effect 改了一个全局变量
-  const runTime = Date.now() // effect 读取了一个外部的值
-  console.log(`Foo Called at ${runTime}.`) // effect 向外部创造了一些数据
+  window.fooCalled = true // effect -> 改写了一个外部变量
+  const runTime = Date.now() // effect -> 读取了一个外部的值
+  console.log(`Foo Called at ${runTime}.`) // effect -> 向外部创造了一些数据
   const res = [1, 2, 3, 4].reduce((acc, cur) => acc + cur, 0) // no effect
   return res // no effect
 }
@@ -18,9 +20,7 @@ const Foo = () => {
 
 ## Vue 依赖收集与触发的观察者模式图例
 
-在一些特定语义下，一些词语具有相同的意思。
-
-当【被观察对象】是【数据】时，那么该【被观察对象】的【观察者们】也就是该数据的【依赖们】。
+【观察者】也称作【被观察对象】的【依赖】，因为【被观察对象】的变化总是会触发【观察者】的一些行为（比如，重新渲染）。
 
 ```js
 const data = {
@@ -32,11 +32,11 @@ const data = {
   },
 }
 
-// 把 data 里的值都赋予一个 observer，此 observer 将监视此值的变化，便赋予了此值响应式的能力
+// 把 data 里的值都赋予一个 observer，此 observer 将监视此值的变化，便赋予了此值响应式
 // 【依赖】监视【值】的【改变】从而做出它的【行为】
 // 【watcher】监视【observer】的【改变】从而做出它的【行为】
-// Vue2 的每个值闭包里的 dep(dep = dependenciesList = watchersList) 其实就是此值 observer 的观察者们的列表，即此值的依赖们
-// 对于观察者来说，被观察对象就是它的依赖
+// Vue2 的每个值闭包里的 dep(dep = dependenciesList = watchersList) 其实就是此值 observer 的观察者们列表，即此值的依赖们
+// 对观察者来说，被观察对象就是它的依赖
 // 在此语义下，值 = observer，依赖 = watcher
 observe(data)
 /**

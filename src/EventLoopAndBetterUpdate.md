@@ -26,7 +26,7 @@ while (1) {
     }
     {
       // **step.3** requestAnimationFrame cycle
-      const rAFListFixed = rAFList.slice() // fixed current rAFList, so that all new added rAF will be run on next tick
+      const rAFListFixed = rAFList.slice() // make current rAFList fixed, so that all new added rAF will be run on next tick
       while (1) {
         const rAF = rAFListFixed.shift()
         if (rAF) {
@@ -37,7 +37,7 @@ while (1) {
       }
     }
     {
-      // **step.4** draw cycle
+      // **step.4** drawing cycle
       call('Parse dom and its style')
       call('Layout')
       call('Paint')
@@ -123,7 +123,7 @@ const nextTick = (task) => {
 
 ```js
 // 本次等待执行的更新函数队列
-// 此处不使用 Set 而是 Array，是因为 Array 可以控制插入的 updater 的位置（从而赋能不同的 updater 有不同的优先级）
+// 此处是 Array 而非 Set，是因为 Array 可以控制插入的 updater 的位置（从而赋能不同的 updater 有不同的优先级）
 const updatersQueue = []
 
 // 是否正在执行 updatersQueue 队列
@@ -256,7 +256,7 @@ const testAnInfiniteLoopCase = () => {
 setTimeout(testAnInfiniteLoopCase, 1e3)
 ```
 
-Vue2 的组件更新就是基于上述代码的原型：
+Vue2 的组件更新就是建立在上述代码的基础上：
 
 - Vue2 的每个组件的 renderWatcher computedWatcher userWatcher 就是 updater
 - Vue2 的 queueWatcher 即 queueUpdater，也会检查此 watcher 是否已经存在

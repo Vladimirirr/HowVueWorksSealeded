@@ -1,8 +1,8 @@
 # 其他
 
-## Vite4 + Vue2 热更新方案
+## Vite4 + Vue2 热更新方式
 
-HMR = Hot Module Replace 在不重载整个组件树的前提下只更新需要更新的组件，从而做到最小更新。
+HMR = Hot Module Replace 在不重载整个组件树的前提下只更新需要更新的组件，从而做到最小更新，同时不让已经存在的状态信息丢失。
 
 Vite 暴露如下的 HMR APIs:
 
@@ -55,7 +55,7 @@ if (!__VUE_HMR_RUNTIME__.isRecorded(__id__)) {
   // __component__ 是 @vue/compiler-sfc 的编译结果
   __VUE_HMR_RUNTIME__.createRecord(__id__, __component__.options) // hmrRccordsMap.push({ options: options, constructor: null, instances: [] })
 }
-// hot.accept 对同一个文件只有第一次有效
+// hot.accept 对同一个文件只有首次有效
 import.meta.hot.accept((newModule) => {
   if (!newModule) return
   // updateType 在 vite 的 trasform 钩子里得出
@@ -130,7 +130,7 @@ record.instances.forEach((instance) => {
 
 ## @vue2/compiler-sfc
 
-@vue2/compiler-sfc：只对 template 和 style 块编译，script 块不需要编译（本身就已经是 JavaScript，transpile 使用 babel 或 **esbuild** 或 **swc**）。
+@vue2/compiler-sfc：只对 template 和 style 块编译，script 块不需要编译（本身就已经是 JavaScript，transpile 采取 babel 或 **esbuild** 或 **swc**）。
 
 - [babel](https://github.com/babel/babel): a JavaScript transpiler written in JavaScript itself
 - [esbuild](https://github.com/evanw/esbuild): a JavaScript transpiler and bundler written in GoLang
@@ -209,23 +209,23 @@ const App = () => {
 
 **蛮荒时代。**
 
-使用完全手写的 JavaScript HTML 和 CSS。
+采取完全手写的 JavaScript HTML 和 CSS。
 
 ### Utilities Library
 
-**前端进入工具方法复用时代。**
+**前端进入工具方法时代。**
 
-- 逻辑方面：封装常用的 dom 操作，代表：jQuery
-- 结构和样式方面：封装常用的结构和它的 css 样式，代表：bootstrap
+- 逻辑方面：封装常见的 dom 操作，代表：jQuery
+- 结构和样式方面：封装常见的结构和它的 css 样式，代表：bootstrap
 
 ### Component with MVC
 
 **前端进入设计模式和组件组合时代。**
 
-引入面向对象领域的 MVC 设计模式，使用此设计模式定义组件：
+引入面向对象领域的 MVC 设计模式，采取此设计模式来定义组件：
 
 1. 组件的数据（状态） = Model（获取、保存数据，触发更新）
-2. 组件的结构和样式 = View（视图使用模板引擎生成）
+2. 组件的结构和样式 = View（视图采取模板引擎生成）
 3. 组件的逻辑 = Controller（更新视图，组件通信，组件挂载、更新和销毁，路由，等其他）
 
 代表：backbone
@@ -234,7 +234,7 @@ const App = () => {
 
 **前端框架正式诞生。**
 
-提出 MVVM 设计模式，每个框架使用自己的 DSL 来描述各自的组件，**框架的运行时**将管理这些组件，负责它们的：挂载、更新、销毁、通信、组合、缓存、等。
+提出 MVVM 设计模式，每个框架采取自己的 DSL 来描述各自的组件，**框架的运行时**将管理这些组件，负责它们的：挂载、更新、销毁、通信、组合、缓存、等。
 
 奠定组件的定义：`UI = Render(State)`，前端框架从传统的专注面向对象的设计模式转换到面向函数的设计模式。
 

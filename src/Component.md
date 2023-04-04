@@ -6,21 +6,21 @@
 
 组件的基本公式：`view = render(state)`
 
-Vue2 的组件就是一个配置对象，使用`Vue.extend`方法将此组件从对象转成组件构造函数，最终使用`new`构造组件的实例。
+Vue2 的组件就是一个配置对象，采取`Vue.extend`方法将此组件从对象转成组件构造函数，最终采取`new`构造组件的实例。
 
-Vue3 的组件依旧是一个配置对象，只不过被组合式语法隐藏，使用`setup`函数暴露出来的对象就是一个配置对象，简单地说，Vue3 就是使用 JavaScript 来描述配置对象，这就好比 grunt(Vue2) 与 gulp(Vue3)。
+Vue3 的组件依旧是一个配置对象，只不过被组合式语法隐藏，采取`setup`函数暴露出来的对象就是一个配置对象，简单地说，Vue3 就是采取 JavaScript 来描述配置对象，这就好比 grunt(Vue2) 与 gulp(Vue3)。
 
-由于全部的依赖（数据）都是响应式的（或者说都是可被观察的），依赖本身可以自由地变化（即 mutable state，与 React 的 immutable state 相对），因此只需要初始化这些依赖一次，再将它们保存在某处（比如实例对象上(Vue2)或闭包里面(Vue3)），修改依赖就能触发其对应的副作用（比如重新渲染）。
+由于全部的依赖（数据）都是响应式的（或者说都是可被观察的），依赖本身可以自由地变化（即 mutable state，与 React 的 immutable state 相对），因此只需要初始化这些依赖一次，再将它们保存在某处（比如实例对象上(Vue2)或闭包里面(Vue3)），修改依赖就能触发其对应的副效果（比如重新渲染）。
 
-Vue2 把依赖及与依赖相关的行为（比如 computed、watch、lifecycle、renderFunction）都定义在组件的配置对象上，**基于对象**，复用手段只有不好驾驭的混入（混入是一个很经典的基于对象的复用技术，只不过很容易出错）。
+Vue2 把依赖及与依赖相关的行为（比如 computed、watch、lifecycle、renderFunction）都定义在组件的配置对象上，**基于对象**，封装手段只有不好驾驭的混入（混入是一个很经典的基于对象的封装技术，只不过很容易出错）。
 
-Vue3 则定义在组件配置对象的 setup 函数的闭包里，**基于函数**，复用手段就相当灵活，任何函数复用的手段都能适用，而且因为函数作用域的存在，不会出现同名标识符覆盖的问题。
+Vue3 则定义在组件配置对象的 setup 函数的闭包里，**基于函数**，封装手段就相当灵活，任何函数封装的手段都适合，而且因为函数域的存在，不会出现同名标识符覆盖的问题。
 
 假设有一门 Vue 语言，它的伪代码：
 
 ```jsx
 import SubView from '/src/components/SubView' // 子组件
-import SomeFeature from '/src/hooks/SomeFeature' // 可复用的公共逻辑块
+import SomeFeature from '/src/hooks/SomeFeature' // 可封装的公共逻辑块
 
 // 一个对象，表示 Vue 组件就是一个对象，而非 React 的函数，Vue3 的 setup 函数只是让 Vue 组件看上去像函数一样而已
 Component Foo(props) = { // props 是对象的内置值
@@ -127,7 +127,7 @@ function initProps(vm) {
       errorLog(`The prop "${key}" failed to pass its validation: ${error}.`, vm)
     } else {
       // 3. 响应式 props
-      // 在组件 update 的 prepatch 时，对基本类型和对象类型都是采用直接赋值
+      // 在组件 update 的 prepatch 时，对基本类型和对象类型都是采取直接赋值
       // 对于基本类型，在 initProps 时就已经将其 reative，从而在组件 prepatch 里面更新此 prop 能使此组件 rerender
       // 对于对象，如果是已经 observed，那么只定义它整体的 getter/setter，如果是未 observed，就 observe 它，再定义它整体的 getter/setter
       // 此时，info.name 和 info.age 的 dep 将会收集 Foo 和 Bar 两个组件的 rerender
@@ -150,7 +150,7 @@ function initProps(vm) {
 
 组件`$emit`触发的是组件自身`$events`下的对应方法，而这些方法是父组件传来的`$listeners`。
 
-使用模板的写法，很容易理解为：子组件和父组件真的有一套消息机制，子组件 `$emit` 把事件传到了父组件，父组件响应这个事件，不过，对于只是使用 Vue 而不去研究它底层的话，这样的理解是相当棒的，它使父组件向子组件的通信高度抽象。
+采取模板的写法，很容易理解为：子组件和父组件真的有一套消息机制，子组件 `$emit` 把事件传到了父组件，父组件响应这个事件，这样的理解是相当棒的，它使父组件向子组件的通信高度抽象。
 
 实际上：
 
@@ -442,7 +442,7 @@ const Foo = (props, children) => {
 
 ### keep-alive
 
-把它 children 的第一个组件的 VNode 缓存（缓存了 VNode 也就缓存了它的最重要的内容 elm(rendered dom) 和 componentInstance）。
+缓存它的 `children[0]` VNode （缓存了 VNode 也就缓存了它的最重要的内容 elm(rendered dom) 和 componentInstance）。
 
 ```js
 const KeepAlive = {
@@ -482,7 +482,7 @@ const KeepAlive = {
     },
   },
   created() {
-    // KeepAlive 组件使用 LRU 缓存策略
+    // KeepAlive 组件采取 LRU 缓存策略
     // 此处省略 LRU 的具体细节
     this.cache = new LRUCache({
       max: this.max,
@@ -496,7 +496,7 @@ const KeepAlive = {
     this.$watch('include', (newNames) => this.pruneCache(newNames))
   },
   render() {
-    // keep-alive 就是一个透传组件，透传它第一个组件的内容
+    // keep-alive 就是一个透传组件
     const slots = this.$slots.default
     const vnode = slots[0]
     if (!isComponent(vnode)) {
@@ -539,29 +539,29 @@ const KeepAlive = {
 
 提供组件因为 v-if 和 v-show 导致的隐藏与显示时的钩子。从而对其中的一些时机 add 或 remove 一些样式（transition、animation、等）。
 
-## 组件的公共逻辑复用技术
+## 组件的公共逻辑封装技术
 
-### 使用 mixin 和 HOC 组件复用技术存在的问题
+### 采取 mixin 和 HOC 组件封装技术存在的问题
 
 1. 来源模糊：不能快速定位谁的 mixin 或 HOC 注入了此功能 -> 能快速定位谁提供了此功能
 2. 命名冲突：不同 mixin 或 HOC 可能存在相同的标识符 -> 能自定义功能需要的标识符
 3. 嵌套过深：HOC 的嵌套 -> 平铺而非嵌套
 4. 关注分离：相同的逻辑可能被拆离到不同的钩子里（比如，设定计时器和清除计时器） -> 相同逻辑能在一起
 
-### 使用 Hook 技术
+### 采取 Hook 技术
 
 mixin 和 HOC 的基建都是对象，而 Hook 的基建是函数，在 GUI 领域，面向对象不能发挥出它最佳的优势，而函数式编程却可以（即`UI = Render(CurrentState)`）。
 
-Vue 的组合式语法借鉴自 React 的 Hook 语法，都是**一种更合理地组织组件内的数据与行为以及组件公共逻辑复用的编程方式**。
+Vue 的组合式语法借鉴自 React 的 Hook 语法，都是**一种更合理地组织组件内的数据与行为以及组件公共逻辑封装的编程方式**。
 
 Hook 本意是将一些**特殊功能**（普通函数不具备的功能，比如有状态的数据、渲染钩子、等等）**钩入**到函数组件里，**钩入** -> 导入 -> 融合 -> **组合**，衍生到：将自定义 Hook 暴露的功能【钩入、组合】到组件里，故根本上`Hook === Composition`，只是不同的叫法。
 
-而广义上，Hook **就是一个有状态的函数**，它能在任何能使用函数的地方使用，**或者说 Hook 将状态赋能给普通函数**。
+而广义上，Hook **就是一个有状态的函数**，**或者说 Hook 将状态赋能给普通函数**。
 
-自定义 Hook 对组件来说就像 C 语言的`#include`一样，将一个 Hook 的【数据和逻辑】导入（组合）到组件，是平铺的代码复用方式。
+自定义 Hook 对组件来说就像 C 语言的`#include`一样，将一个 Hook 的【数据和逻辑】导入（组合）到组件，是平铺的代码封装方式。
 
 示例：
-组件的 setup 执行自定义 Hook，得到需要的依赖和方法，同时安装副作用，**将这些东西组合到自己的 setup 里面**。
+组件的 setup 执行自定义 Hook，得到需要的依赖和方法，同时安装副效果，**将这些东西组合到自己的 setup 里面**。
 
 ```jsx
 import { ref, onMounted } from 'vue'

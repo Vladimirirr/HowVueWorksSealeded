@@ -1,4 +1,4 @@
-# 异步组件
+# Async 组件
 
 Async Component Loader 的基本实现：
 
@@ -189,7 +189,7 @@ function createComponent(ctor, data, context, children, tag) {
 // global register the test async component
 const TestAsyncComponentLoader = () =>
   new Promise((resolve, reject) => {
-    // 使用 setTimeout 模拟
+    // setTimeout 模拟
     setTimeout(() => {
       if (Date.now() % 2) {
         resolve({
