@@ -502,6 +502,7 @@ class Watcher {
 
 // test
 {
+  // 需要响应式的内容，相当 Vue 里的 data 字段
   const testData = {
     name: 'jack',
     age: 22,
@@ -510,9 +511,12 @@ class Watcher {
       cityPath: ['A', 'B', 'C', 'D'],
     },
   }
+  // 响应式化它
   observe(testData)
+  // 挂载到 window，方便查看
   window.testData = testData
 
+  // 副效果，可想象是 Vue 里的 render
   const effect11 = (data) => {
     console.log(`I am ${data.name} and ${data.age} years old.`)
   }
@@ -520,6 +524,7 @@ class Watcher {
     console.log(`effect11's callback: nothing`)
   }
 
+  // 副效果，可想象是 Vue 里的 watch
   const effect22 = '.addr.doorNumber'
   const effect22Callback = (newValue, oldValue) => {
     console.log(`effect22's callback: ${oldValue} -> ${newValue}`)
@@ -527,16 +532,27 @@ class Watcher {
 
   window.watcher11 = new Watcher(effect11, testData, effect11Callback)
   window.watcher22 = new Watcher(effect22, testData, effect22Callback, {
+    // Vue 里的相同概念
     immediate: true,
   })
 }
 ```
 
-## RenderWatcher
+## 更细粒度与 RenderWatcher 的引入
 
-Vue1.x 的响应式更新以 dom 节点为单位进行更新，在渲染模板时遇到插值表达式或指令就会实例化对应的 watcher，这是一种细粒度的更新，而 Vue2.x 以组件为单位进行更新，传入 watcher 的是组件对应的渲染函数（此 watcher 就是 RenderWatcher），这是一种中粒度的更新。
+- Vue1.x 的响应式更新的单位是依赖到此值的最小单个真实 DOM 节点，即，在渲染模板时遇到带有插值表达式（即`{{ value }}`）或内容指令（即`v-text`、`v-html`、`v-show`、`v-bind`）的 DOM 节点就会创建它的 watcher（此 watcher 将维持着 DOM 节点与它依赖值的映射关系），这是一种细粒度的更新
+  1. `v-text` 建立真实 DOM 节点的内容与依赖的映射关系（依赖变化 -> `node.textContent = value`）
+  2. `v-html` 同上（依赖变化 -> `node.innerHTML = value`）
+  3. `v-show` 建立真实 DOM 节点是否显示与依赖的映射关系（依赖变化 -> `node.style.display = showOrNot ? 'block' : 'none'`）
+  4. `v-bind` 建立真实 DOM 节点特性的值与依赖的映射关系（依赖变化 -> `node.setAttribute(attr, value)`）
+- Vue2.x 的响应式更新的单位是组件，传入 watcher 的是组件自己的渲染函数（此时此 watcher 称作 RenderWatcher），依赖的变化不再直接去修改它映射的真实 DOM 节点，而是让此组件内部重新渲染（即重新执行 render 函数），对比两颗 VTree 的不同，对不同之处再反馈到组件映射的 DOM 子树上，即 diff + patch 过程，这是一种中粒度的更新
+  1. `v-text` 建立此组件是否内部重新渲染与依赖的映射关系（依赖变化 -> `component.rerender(/* get newTree */)` -> `component.update(/* diff and patch the oldTree with newTree */)`）
+  2. `v-html` 同上
+  3. `v-show` 同上
+  4. `v-bind` 同上
+- React 的一个组件变化将导致它和它下面的全部子组件都重渲染（可采取 componentShouldUpdate 或 memo 来略过不需要更新的子组件，但这过程对 Vue 而言是自带的），再 diff + patch，这是一种粗粒度的更新
 
 Vue1.x 的细颗粒更新的主要缺点：
 
-1. 依赖越多需要的 watcher 也越多，消耗内存
-2. 仅支持 Web 端（没有 VNode）
+1. 依赖越多需要的 watcher 也越多（一个依赖本质是一个 watcher 对象），消耗内存
+2. 仅支持 Web 端（没有 VNode 的概念）

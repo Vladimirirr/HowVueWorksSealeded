@@ -171,6 +171,7 @@ app.patch(tree2)
 ```
 
 Vue2、React16、React18、Preact10 测试均正常，但是 Vue3 会将 color 的值重置回 red。
+
 Vue3 对 `<tagName :style="{ color: textColor }" />` 这样的 style 值视作动态值，每次 patch 都会重新执行完整的 setProps -> setStyle 从而覆盖被手动修改的 color 值，即便两次的新旧 VNodes Tree 值都一样，这是由于 Vue3 的高度模板优化导致的“问题”。
 
 ## Headless UI

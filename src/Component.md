@@ -8,13 +8,13 @@
 
 Vue2 的组件就是一个配置对象，采取`Vue.extend`方法将此组件从对象转成组件构造函数，最终采取`new`构造组件的实例。
 
-Vue3 的组件依旧是一个配置对象，只不过被组合式语法隐藏，采取`setup`函数暴露出来的对象就是一个配置对象，简单地说，Vue3 就是采取 JavaScript 来描述配置对象，这就好比 grunt(Vue2) 与 gulp(Vue3)。
+Vue3 的组件依旧是一个配置对象，只不过被组合式语法隐藏，`setup`函数暴露出来的对象就是一个配置对象，简单地说，Vue3 就是采取 JavaScript 来描述配置对象，这就好比构建工具领域下的 grunt( -> Vue2 ) 与 gulp( -> Vue3 )。
 
-由于全部的依赖（数据）都是响应式的（或者说都是可被观察的），依赖本身可以自由地变化（即 mutable state，与 React 的 immutable state 相对），因此只需要初始化这些依赖一次，再将它们保存在某处（比如实例对象上(Vue2)或闭包里面(Vue3)），修改依赖就能触发其对应的副效果（比如重新渲染）。
+由于全部的依赖（数据）都是响应式的（或者说都是可被观察的），依赖本身可以自由地变化（即 mutable state，与 React 的 immutable state 相对），因此只需要初始化这些依赖一次（得到依赖的映射关系），再将它们保存在某处（比如实例对象上(Vue2)或闭包里面(Vue3)），修改依赖就能触发其对应的副效果（比如重新渲染）。
 
 Vue2 把依赖及与依赖相关的行为（比如 computed、watch、lifecycle、renderFunction）都定义在组件的配置对象上，**基于对象**，封装手段只有不好驾驭的混入（混入是一个很经典的基于对象的封装技术，只不过很容易出错）。
 
-Vue3 则定义在组件配置对象的 setup 函数的闭包里，**基于函数**，封装手段就相当灵活，任何函数封装的手段都适合，而且因为函数域的存在，不会出现同名标识符覆盖的问题。
+Vue3 则定义在组件配置对象的 setup 函数的闭包里，**基于函数**，封装手段就相当灵活，任何函数封装的手段都适合，而且因为函数域(function lexical scope)的存在，不会出现同名标识符覆盖的问题。
 
 假设有一门 Vue 语言，它的伪代码：
 
@@ -25,7 +25,7 @@ import SomeFeature from '/src/hooks/SomeFeature' // 可封装的公共逻辑块
 // 一个对象，表示 Vue 组件就是一个对象，而非 React 的函数，Vue3 的 setup 函数只是让 Vue 组件看上去像函数一样而已
 Component Foo(props) = { // props 是对象的内置值
   name = 'nat' // 定义一个普通值，不参与组件的响应式系统
-  track age = 22 // 定义一个依赖，参与组件的响应式系统
+  track age = 22 // 定义一个依赖（track 表示需要跟踪 age 的变化，也表示 age 是一个依赖），参与组件的响应式系统
   computed doubleAge = this.age * 2 // 定义一个 computed，依赖于 age，也叫做 age 依赖的 effect
   watch age(){
     // 定义一个 watch effect，依赖于 age，也叫做 age 依赖的 effect
@@ -51,7 +51,7 @@ Component Foo(props) = { // props 是对象的内置值
 
 有如下父子组件：
 
-`Foo.vue`:
+父组件 `Foo.vue`:
 
 ```vue
 <template>
@@ -59,7 +59,7 @@ Component Foo(props) = { // props 是对象的内置值
     <p>{{ username }}</p>
     <p>{{ info.name }} - {{ info.age }}</p>
     <p>Hello</p>
-    <!-- username 传递的是简单值，没有响应式，将在 Bar 的 initProps 里对它响应式 -->
+    <!-- username 传递的是简单值（基础值），因此此时不具备响应式，将在 Bar 的 initProps 里对它响应式 -->
     <!-- info 传递的是响应式的值，在 Bar 里面读取 info 依赖时将收集 Bar 的 renderWatcher -->
     <Bar :username="username" :info="info"></Bar>
   </div>
@@ -79,7 +79,7 @@ export default {
 </script>
 ```
 
-`Bar.vue`:
+子组件 `Bar.vue`:
 
 ```vue
 <template>
@@ -113,8 +113,8 @@ function initProps(vm) {
   // 其中 type 表示此 prop 需要的类型，而 null 表示不验证此 prop 类型
   const propsOptions = normalizeProps(vm.$options.propsOptions || {})
   // 保存此组件 props 的容器，和 _data 一样
-  // 即 this.propName -getter-> this._props.propName
-  // 即 this.dataName -getter-> this.data.dataName
+  // 即 this.propName --getter-> this._props.propName
+  // 即 this.dataName --getter-> this.data.dataName
   const props = (vm._props = {})
   function propInit(key) {
     if (isReservedAttribute(key)) {
@@ -128,8 +128,8 @@ function initProps(vm) {
     } else {
       // 3. 响应式 props
       // 在组件 update 的 prepatch 时，对基本类型和对象类型都是采取直接赋值
-      // 对于基本类型，在 initProps 时就已经将其 reative，从而在组件 prepatch 里面更新此 prop 能使此组件 rerender
-      // 对于对象，如果是已经 observed，那么只定义它整体的 getter/setter，如果是未 observed，就 observe 它，再定义它整体的 getter/setter
+      // 对基本类型，在 initProps 时就已经将其 reative，从而在组件 prepatch 里面更新此 prop 能使此组件 rerender
+      // 对对象，如果是已经 observed，那么只定义它整体的 getter/setter，如果是未 observed，就 observe 它，再定义它整体的 getter/setter
       // 此时，info.name 和 info.age 的 dep 将会收集 Foo 和 Bar 两个组件的 rerender
       defineReactive(props, key, value, () => {
         errorLog(`The prop "${key}" is readonly.`, vm)
@@ -150,7 +150,7 @@ function initProps(vm) {
 
 组件`$emit`触发的是组件自身`$events`下的对应方法，而这些方法是父组件传来的`$listeners`。
 
-采取模板的写法，很容易理解为：子组件和父组件真的有一套消息机制，子组件 `$emit` 把事件传到了父组件，父组件响应这个事件，这样的理解是相当棒的，它使父组件向子组件的通信高度抽象。
+采取模板的写法，很容易这样理解：子组件和父组件真的有一套消息管道，子组件 `$emit` 把事件传到了父组件，父组件响应这个事件，这样的理解是相当棒的，它使父组件向子组件的通信高度抽象。（但是，我们自己内心要知道，这套消息管道实际上是不存在的）
 
 实际上：
 
@@ -183,7 +183,7 @@ const ViewRender = () => {
 
 ### v-model
 
-`prop`和`event`的语法糖。
+`props`和`events`的语法糖。
 
 ```vue
 <template>
@@ -378,7 +378,7 @@ const FooRender = () => {
 }
 ```
 
-The renderSlot:
+其中的 renderSlot 函数是这样的:
 
 ```js
 const renderSlot = (slotName, fallback, props, vm) => {
@@ -396,7 +396,7 @@ const renderSlot = (slotName, fallback, props, vm) => {
 }
 ```
 
-React 里的 renderProps 的示例：
+与 React 里的 renderProps 对照：
 
 ```jsx
 // App 组件
@@ -442,7 +442,7 @@ const Foo = (props, children) => {
 
 ### keep-alive
 
-缓存它的 `children[0]` VNode （缓存了 VNode 也就缓存了它的最重要的内容 elm(rendered dom) 和 componentInstance）。
+缓存它 `children[0]` 的 VNode （缓存了 VNode 也就缓存了它最重要的内容 elm(rendered dom) 和 componentInstance）。
 
 ```js
 const KeepAlive = {
@@ -556,12 +556,13 @@ Vue 的组合式语法借鉴自 React 的 Hook 语法，都是**一种更合理�
 
 Hook 本意是将一些**特殊功能**（普通函数不具备的功能，比如有状态的数据、渲染钩子、等等）**钩入**到函数组件里，**钩入** -> 导入 -> 融合 -> **组合**，衍生到：将自定义 Hook 暴露的功能【钩入、组合】到组件里，故根本上`Hook === Composition`，只是不同的叫法。
 
-而广义上，Hook **就是一个有状态的函数**，**或者说 Hook 将状态赋能给普通函数**。
+而狭义上，Hook **就是一个有状态的函数**，**或者说 Hook 将状态赋能给普通函数**。
 
 自定义 Hook 对组件来说就像 C 语言的`#include`一样，将一个 Hook 的【数据和逻辑】导入（组合）到组件，是平铺的代码封装方式。
 
 示例：
-组件的 setup 执行自定义 Hook，得到需要的依赖和方法，同时安装副效果，**将这些东西组合到自己的 setup 里面**。
+
+组件的 setup 执行自定义 Hook，得到需要的依赖和方法，同时安装副效果，**将这些东西组合到自己的 setup 里面**：
 
 ```jsx
 import { ref, onMounted } from 'vue'
@@ -610,7 +611,7 @@ const Foo = {
 const FooEquivalent = {
   setup(props) {
     const name = ref('nat')
-    // just like #include in C
+    // just like what #include does in C
     const [switchValue, toggleSwitch] = ((init = false) => {
       const value = ref(init)
       const toggleFalse = () => (value.value = false)

@@ -73,7 +73,7 @@
    6. set `_isDestroyed` flag to true
    7. call `destroyed` hook
 
-### 其中父子组件的关系索引：`_vnode` 与 `$vnode`
+### 其中父子组件的索引关系：`_vnode` 与 `$vnode`
 
 `_vnode`: 表示渲染 VNode，组件自己 render 函数返回的 VNodesTree。
 
