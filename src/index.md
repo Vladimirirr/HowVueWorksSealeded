@@ -1,6 +1,44 @@
 # 目录
 
+## -1、前言
+
 > 本系列文章从宏观方向阐述了 Vue2.x 的基本实现思想，是 Vue 实现思想的入门教程。深入一门技术时，整体方向是最重要的，一旦方向是对的，剩下的就是时间问题（比如，一些内置函数的具体实现）。
+
+> 尽管现在 Vue 已经全系到了 Vue3.x，但是最核心的【响应式思想】换汤不换药，Vue3.x 可以概况到：
+>
+> 1. 提高了响应式的性能：defineProperty -> Proxy
+> 2. 提高了从模板转译而来的 render 函数的性能：更强的静态优化策略
+> 3. 提高了代码的可维护性：引入组合式语法，从面向对象到投抱函数式，根本上降低了 mixin 和 HOC 带来的混乱
+
+## 0、整体设计思想
+
+### 响应式的系统
+
+```mermaid
+flowchart TD
+
+dataIn["data"]
+dataOut["data(getters & setters) <--观察着此值-- observer"]
+ob["observe"]
+wa["watcher"]
+dep["dep(dependencies) \n watchersList"]
+effect["effect \n a render, computed or watching"]
+
+dataIn --> ob --"make it observable (aka reactive)"--> dataOut
+
+dataOut --"getter \n 读取 + 收集（到 dep）"--> wa
+dataOut --"setter \n 改写 + 通知"--> dep
+
+dep --"收集"--> dataOut
+dep --"依次通知"--> wa
+
+wa --"触发"--> effect
+
+effect --"读取"--> dataOut
+
+```
+
+### 组件树的组合
 
 ## 1、命令式与声明式
 

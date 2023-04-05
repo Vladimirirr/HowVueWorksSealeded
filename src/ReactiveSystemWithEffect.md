@@ -273,6 +273,7 @@ const defineReactive = (target, key, isShallow) => {
     key,
     true,
     () => {
+      // 在 getter 里收集依赖
       observer.collect()
       if (observerOutside) {
         observerOutside.collect()
@@ -280,6 +281,7 @@ const defineReactive = (target, key, isShallow) => {
       return value
     },
     (newValue) => {
+      // 在 setter 里触发依赖
       if (newValue === value) {
         return
       }
