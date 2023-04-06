@@ -40,6 +40,42 @@ effect --"读取"--> dataOut
 
 ### 组件树的组合
 
+备注：
+
+1. 实线：DOM 树里真实节点间的索引
+2. 点线：Vue 组件在 DOM 树里透传其内部 DOM 节点们的暗示
+
+```mermaid
+flowchart TD
+
+divApp["挂载点 \n div#app"]
+
+cpnRoot["Root根组件"]
+cpnRootElm1["根组件的根节点 \n div.RootContainer"]
+cpnRootElm2["根节点的一个子节点 \n div.RootContainer > p"]
+cpnRootElm3["此p节点的文本内容 \n 'Hello, World.'"]
+
+cpnFoo["Foo组件 \n 根组件的一个子组件"]
+cpnFooElm1["Foo组件的根节点 \n div.FooContainer"]
+cpnFooElm2["根节点的一个子节点 \n  div.FooContainer > img"]
+
+cpnBar["Bar组件 \n Foo组件的一个子组件"]
+cpnBarElm1["Bar组件的根节点 \n div.BarContainer"]
+
+divApp --> cpnRoot
+
+cpnRoot -.-> cpnRootElm1
+cpnRootElm1 --> cpnRootElm2 --> cpnRootElm3
+cpnRootElm1 --> cpnFoo
+
+cpnFoo -.-> cpnFooElm1
+cpnFooElm1 --> cpnFooElm2
+cpnFooElm1 --> cpnBar
+
+cpnBar -.-> cpnBarElm1
+
+```
+
 ## 1、命令式与声明式
 
 [Open.](./TheWriteMode.md)
