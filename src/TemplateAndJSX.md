@@ -12,10 +12,8 @@ Virtual 表示此数据结构与特定平台不相关。
 DSL(Domain Specified Language) 指的是仅在特定领域下发挥效果的语言，比如：
 
 1. HTML & CSS 仅在 Web 下
-2. SQL 仅在 DBMS 下
-3. Markdown
-4. AWK
-5. ...
+2. SQL 仅在 RDBMS 下
+3. AWK 仅在 AWK 文字处理器下
 
 下面的 Template 和 JSX 都是描述 UI 的 DSL。
 

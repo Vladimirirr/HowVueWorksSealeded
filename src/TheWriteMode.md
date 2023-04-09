@@ -62,3 +62,10 @@ console.log(result)
   }
 </style>
 ```
+
+下面这些也是常见的声明式语言：
+
+1. SQL
+2. Markdown
+3. AWK
+4. RegExp
