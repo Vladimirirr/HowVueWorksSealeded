@@ -12,7 +12,7 @@
 ```js
 import scoreArr from './scoreArr.json' // 成绩数组
 
-// 1. 新建保存结果的数组
+// 1. 创建保存结果的数组
 const result = []
 // 2. 迭代此数组
 for (const i of scoreArr) {
@@ -24,7 +24,7 @@ for (const i of scoreArr) {
 }
 console.log(result)
 
-// 我们把如何解决问题的每一步都告诉了机器，我们参与解决问题的整个过程！
+// 我们把如何解决问题的每一步都告诉了机器，我们参与了解决问题的整个过程！
 ```
 
 声明式：
@@ -41,9 +41,9 @@ console.log(result)
 
 就像把【大象放进冰箱里】的问题一样：
 
-1. open the door
-2. put the elephant into
-3. close the door
+1. 打开冰箱门
+2. 把大象放进去
+3. 关闭冰箱门
 
 其中步骤 2 到底是怎么做到的我们不关心，我们只关注结果，即大象已经放进去了，这就是声明式编程的核心理念。
 

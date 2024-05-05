@@ -18,25 +18,37 @@
 flowchart TD
 
 dataIn["data"]
-dataOut["data(getters & setters) <--观察着此值-- observer"]
+dataOut["observable <--观察着-- observer(由 getters & setters 组成)"]
 ob["observe"]
-wa["watcher"]
-dep["dep(dependencies) \n watchersList"]
-effect["effect \n a render, computed or watching"]
+sub["subscriber"]
+subs["此值的 subscribers"]
+effect["effect(a render, computed, watching, ...)"]
 
-dataIn --> ob --"make it observable (aka reactive)"--> dataOut
+dataIn --> ob --"make observable"--> dataOut
 
-dataOut --"getter \n 读取 + 收集（到 dep）"--> wa
-dataOut --"setter \n 改写 + 通知"--> dep
+dataOut --"getter \n读值 + 收集到"--> subs
+dataOut --"setter \n写值 + 通知到"--> subs --"依次通知"--> sub
 
-dep --"收集"--> dataOut
-dep --"依次通知"--> wa
-
-wa --"触发"--> effect
+sub --"反向收集"--> subs
+sub --"触发"--> effect
 
 effect --"读取"--> dataOut
 
+linkStyle 2,7 stroke:pink
+linkStyle 3,4,6 stroke:green
 ```
+
+注释：
+
+1. observer 是 data 的观察者，观察并记录着任何东西对 data 的读写
+2. 在 Vue2 里，observer 由 data 对象的所有 getter 和 setter 共同实现
+3. 当一个值在一个副效果里被读取时，此值即此副效果的一个依赖（从副效果的方向看值），而副效果也即此值的一个订阅者（从值的方向看副效果）
+4. 一个响应式值的副效果指的是，当此值变化了，除了此值本身的内容已发生改变，还会触发一些其他的行为，这些行为即此值的副效果，比如 re-render、re-computed
+
+链接到 Vue2：
+
+1. subscribers = Vue2's dependencies，从其他方向看待，副效果也是响应式值的依赖
+2. subscriber = Vue2's watcher，含义相似，即 subscribing = watching = listening
 
 ### 组件树的组合
 
@@ -115,6 +127,10 @@ cpnBar -.-> cpnBarElm1
 ## 10、事件循环与更新优化
 
 [Open.](./EventLoopAndBetterUpdate.md)
+
+## 11、向前兼容：引入组合式语法
+
+[Open.](./Setup.md)
 
 ## 11、其他
 
