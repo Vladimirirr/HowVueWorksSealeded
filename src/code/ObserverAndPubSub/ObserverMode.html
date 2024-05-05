@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <script>
+      class Subject {
+        constructor(name) {
+          this.id = `subject_${name}`
+          this.data = {
+            whoami: this.id,
+            // subject's own data here
+          }
+          this.observers = []
+        }
+        /**
+         * add a observer
+         * @param {Observer} observer
+         * @param {boolean} immediate
+         */
+        addObserver(observer, immediate) {
+          this.observers.push(observer)
+          this.trigger('addObserver', observer)
+          if (immediate) {
+            const sentData = {
+              eventData: this.observers,
+              data: this.data,
+            }
+            observer.update('immediate', sentData)
+          }
+        }
+        /**
+         * delete a observer
+         * @param {Observer} observer
+         */
+        delObserver(observer) {
+          const foundIndex = this.observers.indexOf(observer)
+          if (foundIndex == -1) return
+          this.observers.splice(foundIndex, 1)
+          this.trigger('delObserver', observer)
+        }
+        /**
+         * trigger all observers
+         * @param {string} eventName
+         * @param {any?} data
+         */
+        trigger(eventName, data) {
+          const sentData = {
+            // 触发事件时，此事件所携带的信息
+            eventData: data,
+            // 触发事件时，此被观察对象此刻的自身信息
+            data: this.data,
+          }
+          this.observers.forEach((ob) => ob.update(eventName, sentData))
+        }
+        /**
+         * when subject's data changed
+         * @param {string} whichChanged
+         */
+        dataChanged(whichChanged) {
+          this.trigger('dataChanged', whichChanged)
+        }
+      }
+
+      class Observer {
+        constructor(name) {
+          this.id = `observer_${name}`
+          this.target = null // 观察的目标
+          this.callback = null
+        }
+        /**
+         * observe a subject
+         * @param {Subject} subject
+         * @param {Function} callback
+         * @param {boolean} immediate
+         */
+        observe(subject, callback, immediate) {
+          this.unobserve()
+          this.target = subject
+          this.callback = callback
+          this.target.addObserver(this, immediate)
+        }
+        /**
+         * unobserve a subject
+         */
+        unobserve() {
+          if (this.target) {
+            // remove myself from the subject
+            this.target.delObserver(this)
+            this.target = null
+          }
+        }
+        /**
+         * get the observed subject
+         * @return {Subject}
+         */
+        getSubject() {
+          return this.target
+        }
+        /**
+         * triggered by a subject
+         * @param {string} eventName
+         * @param {any?} data
+         */
+        update(eventName, data) {
+          this.callback(eventName, data)
+        }
+      }
+
+      // test
+      {
+        const subjectAA = new Subject('AA')
+
+        const observer11 = new Observer('11')
+        const observer22 = new Observer('22')
+
+        // 由于观察者直接观察一个被观察对象，因此两者都知道彼此的存在
+        observer11.observe(subjectAA, (eventName, data) => {
+          // do something
+          console.log(
+            `observer11: A ${eventName} event received, and the sent data is`,
+            data
+          )
+        })
+        observer22.observe(
+          subjectAA,
+          (eventName, data) => {
+            // do something
+            console.log(
+              `observer22: A ${eventName} event received, and the sent data is`,
+              data
+            )
+          },
+          true
+        )
+
+        console.log(
+          "observer11's current observed subject is",
+          observer11.getSubject()
+        )
+
+        observer22.unobserve()
+
+        subjectAA.dataChanged('An unknown item changed')
+      }
+    </script>
+  </body>
+</html>

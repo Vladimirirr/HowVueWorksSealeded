@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <script>
+      class Publisher {
+        /**
+         * @constructor
+         * @param {string} name
+         * @param {EventChannel} eventChannel - where the publisher registered on
+         */
+        constructor(name, eventChannel) {
+          this.id = `publisher_${name}`
+          this.eventChannel = eventChannel
+          this.data = {
+            // some data
+            whoami: this.id,
+          }
+        }
+        /**
+         * publish an event
+         * @param {string} eventName
+         * @param {any?} data
+         */
+        publish(eventName, eventData) {
+          const sentData = {
+            eventData,
+            data: this.data,
+          }
+          this.eventChannel.dispatchEvent(eventName, sentData)
+        }
+      }
+
+      class Subscriber {
+        /**
+         * @constructor
+         * @param {string} name
+         * @param {EventChannel} eventChannel - where the subscriber listening on
+         */
+        constructor(name, eventChannel) {
+          this.id = `subscriber_${name}`
+          this.eventChannel = eventChannel
+          this.subscribedEvents = []
+        }
+        /**
+         * subscribe an event
+         * @param {string} eventName
+         * @param {Function} callback
+         */
+        subscribe(eventName, callback) {
+          if (this.subscribedEvents.find((ev) => ev.eventName == eventName)) {
+            throw 'The event has been subscribed.'
+          }
+          this.eventChannel.subscribeEvent(eventName, this)
+          this.subscribedEvents.push({
+            eventName,
+            callback,
+          })
+        }
+        /**
+         * unsubscribe an event
+         * @param {string} eventName
+         */
+        unsubscribe(eventName) {
+          const foundIndex = this.subscribedEvents.findIndex(
+            (ev) => ev.eventName == eventName
+          )
+          if (foundIndex == -1) return
+          this.eventChannel.unsubscribeEvent(eventName, this)
+          this.subscribedEvents.splice(foundIndex, 1)
+        }
+        /**
+         * the exposed function to activate the subscriber itself
+         * @param {string} eventName
+         * @param {any?} data
+         */
+        update(eventName, data) {
+          const found = this.subscribedEvents.find(
+            (ev) => ev.eventName == eventName
+          )
+          found?.callback(data)
+        }
+      }
+
+      // aka Bus
+      // 事件管道 or 事件总线
+      class EventChannel {
+        constructor() {
+          this.eventPool = {} // 事件池
+        }
+        /**
+         * a subscriber want to subscribe a event
+         * @param {string} eventName
+         * @param {Subscriber} subscriber
+         */
+        subscribeEvent(eventName, subscriber) {
+          const pool = this.eventPool
+          if (pool[eventName]) {
+            pool[eventName].push(subscriber)
+          } else {
+            pool[eventName] = [subscriber]
+          }
+        }
+        /**
+         * a subscriber want to unsubscribe a event
+         * @param {string} eventName
+         * @param {Subscriber?} subscriber
+         */
+        unsubscribeEvent(eventName, subscriber) {
+          const pool = this.eventPool
+          if (pool[eventName]) {
+            if (subscriber) {
+              const targetEvents = pool[eventName]
+              const foundIndex = targetEvents.indexOf(subscriber)
+              if (foundIndex) {
+                targetEvents.splice(foundIndex, 1)
+              }
+            } else {
+              pool[eventName].length = 0
+            }
+          }
+        }
+        /**
+         * dispatch an event to all its related subscriber
+         * @param {string} eventName
+         * @param {any?} data
+         */
+        dispatchEvent(eventName, data) {
+          const pool = this.eventPool
+          const found = pool[eventName]
+          if (found) {
+            // 事件的发布常常由消息队列完成，大多都是非同步的
+            found.forEach((sub) => sub.update(eventName, data))
+          }
+        }
+      }
+
+      // test
+      {
+        // 由于代理 ec 的存在，发布者和订阅者不能知道彼此的存在
+        const ec = new EventChannel()
+
+        const publisherAA = new Publisher('AA', ec)
+        const publisherBB = new Publisher('BB', ec)
+
+        const subscriber11 = new Subscriber('11', ec)
+        const subscriber22 = new Subscriber('22', ec)
+
+        subscriber11.subscribe('TotalChanged', (data) => {
+          console.log(
+            `subscriber11 received TotalChanged event and the data is ${JSON.stringify(
+              data
+            )}`
+          )
+        })
+        subscriber11.subscribe('VolumeChanged', (data) => {
+          console.log(
+            `subscriber11 received VolumeChanged event and the data is ${JSON.stringify(
+              data
+            )}`
+          )
+        })
+
+        subscriber22.subscribe('VolumeChanged', (data) => {
+          console.log(
+            `subscriber22 received VolumeChanged event and the data is ${JSON.stringify(
+              data
+            )}`
+          )
+        })
+
+        setTimeout(() => {
+          publisherAA.publish('TotalChanged', 200)
+          publisherBB.publish('TotalChanged', 400)
+        }, 1e3)
+        setTimeout(() => {
+          publisherAA.publish('VolumeChanged', 0.4)
+          publisherBB.publish('VolumeChanged', 0.8)
+        }, 2e3)
+      }
+    </script>
+  </body>
+</html>
