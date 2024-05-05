@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <script type="module">
+      import nextTick from './nextTick.js'
+
+      // test
+      {
+        setTimeout(() => console.log('This will be called after nextTick.'), 0)
+        nextTick(() => console.log('11'))
+        nextTick(() => console.log('22'))
+      }
+    </script>
+  </body>
+</html>
